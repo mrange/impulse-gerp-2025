@@ -19,7 +19,7 @@
 #define USE_MMX
 #define MUSIC_TIME
 
-#define SHOW_WINDOW
+//#define SHOW_WINDOW
 #define INFO_TEXT
 
 void init__effect8();
