@@ -59,12 +59,10 @@ effect_kind effect2(effect_input const & ei) {
       auto h0 = hash(p+std::floorf(-0.125F-0.125F*time/music__beat_time+py*py+0.33F*hash(p)));
 
       auto shape = L'╳';
-      if (h0 > 0.55) {
+      if (h0 > 0.5) {
         shape = L'╱';
-      } else if (h0 > 0.1) {
-        shape = L'╲';
       } else {
-        shape = L'_';
+        shape = L'╲';
       }
       ei.screen.draw__pixel(
           shape
