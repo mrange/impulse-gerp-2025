@@ -19,7 +19,7 @@
 #define USE_MMX
 #define MUSIC_TIME
 
-//#define SHOW_WINDOW
+#define SHOW_WINDOW
 #define INFO_TEXT
 
 void init__effect8();
@@ -74,7 +74,7 @@ namespace {
 
   std::size_t const desired__width  = 800;
   std::size_t const desired__height = 600;
-  wchar_t const windows_class_name[]= L"TerminalEffects";
+  char const windows_class_name[]= "terminal";
 
   std::size_t viewport__width       = desired__width ;
   std::size_t viewport__height      = desired__height;
@@ -897,6 +897,18 @@ int main() {
 
     CHECK_CONDITION(SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_SYSTEM_AWARE));
 
+    {
+      // Setup current directory
+      char path__exe[MAX_PATH];
+      DWORD path__length = GetModuleFileNameA(nullptr, path__exe, MAX_PATH);
+      CHECK_CONDITION(path__length < MAX_PATH);
+      auto s__exe     = std::string (path__exe, path__length);
+      auto f__slash   = s__exe.find_last_of("/\\");
+      CHECK_CONDITION(f__slash != std::string::npos);
+      auto s__current = s__exe.substr(0, f__slash);
+      CHECK_CONDITION(SetCurrentDirectoryA(s__current.c_str()));
+    }
+ 
     CHECK_HRESULT(CoInitialize(0));
     auto onexit__counitialize = on_exit([]{ CoUninitialize(); });
 
@@ -1132,7 +1144,7 @@ int main() {
       wchars_to_utf8(output, end_text);
 
       auto sixel__handle = CreateFileA(
-        R"PATH(D:\assets\gerp.txt)PATH"
+        R"PATH(enjoy-gerp.txt)PATH"
       , GENERIC_READ
       , FILE_SHARE_READ
       , nullptr
