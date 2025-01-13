@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="TerminalEffects.cpp" />
+    <ClCompile Include="effect1.cpp" />
+    <ClCompile Include="common.cpp" />
+    <ClCompile Include="effect0.cpp" />
+    <ClCompile Include="effect3.cpp" />
+    <ClCompile Include="effect2.cpp" />
+    <ClCompile Include="screen.cpp" />
+    <ClCompile Include="precompiled.cpp" />
+    <ClCompile Include="effect4.cpp" />
+    <ClCompile Include="effect5.cpp" />
+    <ClCompile Include="effect6.cpp" />
+    <ClCompile Include="effect7.cpp" />
+    <ClCompile Include="effect.cpp" />
+    <ClCompile Include="effect8.cpp" />
+    <ClCompile Include="effect9.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="common.hpp" />
+    <ClInclude Include="vectors.hpp" />
+    <ClInclude Include="screen.hpp" />
+    <ClInclude Include="precompiled.hpp" />
+    <ClInclude Include="effect.hpp" />
+    <ClInclude Include="glext.h" />
+  </ItemGroup>
+</Project>

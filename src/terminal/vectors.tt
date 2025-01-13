@@ -1,0 +1,179 @@
+﻿<#@ output extension=".hpp"#>
+#pragma once
+
+#include "common.hpp"
+
+<#
+  var operators = new string [] {
+    "+"
+  , "-"
+  , "*"
+  , "/"
+  };
+  var functions = new (string Name, string Invoke) [] {
+      ("cos"        , "std::cosf"     )
+    , ("sin"        , "std::sinf"     )
+    , ("floor"      , "std::floorf"   )
+    , ("log"        , "std::logf"     )
+    , ("sqrt"       , "std::sqrtf"    )
+    , ("fract"      , "::fractf"      )
+    , ("round"      , "::roundf"      )
+    , ("tanh_approx", "::tanh_approxf")
+    , ("saturate"   , "::saturate"    )
+  };
+#>
+<# for (var maxDim = 1; maxDim < 5; ++maxDim) { #>
+struct vec<#=maxDim#> {
+<# for (var dim = 0; dim < maxDim; ++dim) { #>
+  float <#=DimName(dim)#>;
+<# } #>
+
+  explicit vec<#=maxDim#>()
+<# for (var dim = 0; dim < maxDim; ++dim) { #>
+    <#=dim == 0 ? ":" : ","#> <#=DimName(dim)#>(0)
+<# } #>
+  {
+  }
+
+<# if (maxDim > 1) { #>
+  explicit vec<#=maxDim#>(float c)
+<# for (var dim = 0; dim < maxDim; ++dim) { #>
+    <#=dim == 0 ? ":" : ","#> <#=DimName(dim)#>(c)
+<# } #>
+  {
+  }
+<# } #>
+
+  explicit vec<#=maxDim#>(
+<# for (var dim = 0; dim < maxDim; ++dim) { #>
+    <#=dim == 0 ? " " : ","#> float <#=DimName(dim)#>_
+<# } #>
+    )
+<# for (var dim = 0; dim < maxDim; ++dim) { #>
+    <#=dim == 0 ? ":" : ","#> <#=DimName(dim)#>(<#=DimName(dim)#>_)
+<# } #>
+  {
+  }
+
+<# foreach (var op in operators) { #>
+  vec<#=maxDim#>& operator<#=op#>=(float other) {
+<# for (var dim = 0; dim < maxDim; ++dim) { #>
+    <#=DimName(dim)#> <#=op#>= other;
+<# } #>
+
+    return *this;
+  }
+
+  vec<#=maxDim#> operator<#=op#>(float other) const {
+    vec<#=maxDim#> c = *this;
+    c <#=op#>= other;
+    return c;
+  }
+
+  vec<#=maxDim#>& operator<#=op#>=(vec<#=maxDim#> const & other) {
+<# for (var dim = 0; dim < maxDim; ++dim) { #>
+    <#=DimName(dim)#> <#=op#>= other.<#=DimName(dim)#>;
+<# } #>
+
+    return *this;
+  }
+
+  vec<#=maxDim#> operator<#=op#>(vec<#=maxDim#> const & other) const {
+    vec<#=maxDim#> c = *this;
+    c <#=op#>= other;
+    return c;
+  }
+
+<# } #>
+
+<# foreach (var (fun, inv) in functions) { #>
+  void <#=fun#>__inplace() {
+<# for (var dim = 0; dim < maxDim; ++dim) { #>
+    <#=DimName(dim)#> = <#=inv#>(<#=DimName(dim)#>);
+<# } #>
+  }
+
+  vec<#=maxDim#> <#=fun#>() const {
+    vec<#=maxDim#> c = *this;
+    c.<#=fun#>__inplace();
+    return c;
+  }
+
+<# } #>
+
+  float dot(vec<#=maxDim#> const & other) const {
+    float sum = 0.F;
+
+<# for (var dim = 0; dim < maxDim; ++dim) { #>
+    sum += <#=DimName(dim)#>*other.<#=DimName(dim)#>;
+<# } #>
+
+    return sum;
+  }
+
+<# if (maxDim == 3) { #>
+  vec<#=maxDim#> cross(vec<#=maxDim#> const & other) const {
+    return vec<#=maxDim#>(
+        y * other.z - z * other.y,
+        z * other.x - x * other.z,
+        x * other.y - y * other.x
+    );
+  }
+<# } #>
+
+  float length2() const {
+    return dot(*this);
+  }
+
+  float length() const {
+    return std::sqrt(dot(*this));
+  }
+
+  void normalize__inplace() {
+    *this *= 1.F/length();
+  }
+
+  vec<#=maxDim#> normalized() const {
+    vec<#=maxDim#> c = *this;
+    c.normalize__inplace();
+    return c;
+  }
+
+  float distance(vec<#=maxDim#> const & other) const {
+    return (*this - other).length();
+  }
+};
+
+inline vec<#=maxDim#> mix(vec<#=maxDim#> const & b, vec<#=maxDim#> const & e, float x) {
+  vec<#=maxDim#> c;
+
+<# for (var dim = 0; dim < maxDim; ++dim) { #>
+  c.<#=DimName(dim)#> = ::mix(b.<#=DimName(dim)#>, e.<#=DimName(dim)#>, x);
+<# } #>
+
+  return c;
+}
+
+inline vec<#=maxDim#> smoothstep(vec<#=maxDim#> const & edge0, vec<#=maxDim#> const & edge1, vec<#=maxDim#> const & x) {
+  vec<#=maxDim#> c;
+
+<# for (var dim = 0; dim < maxDim; ++dim) { #>
+  c.<#=DimName(dim)#> = ::smoothstep(edge0.<#=DimName(dim)#>, edge1.<#=DimName(dim)#>, x.<#=DimName(dim)#>);
+<# } #>
+
+  return c;
+}
+
+<# } #>
+
+<#+
+  string DimName(int dim) {
+    switch(dim) {
+      case 0: return "x";
+      case 1: return "y";
+      case 2: return "z";
+      case 3: return "w";
+      default: return "UNKNOWN-" + dim;
+    }
+  }
+#>
