@@ -247,6 +247,7 @@ namespace {
     ) {
     /*⣀⣤⣶⣿ */
     wchar_t fg__red[]     = L"\x1B[38;2;255;85;85m";
+    wchar_t fg__green[]   = L"\x1B[38;2;85;255;85m";
     wchar_t fg__orange[]  = L"\x1B[38;2;255;165;85m";
     wchar_t fg__yellow[]  = L"\x1B[38;2;255;255;85m";
     wchar_t fg__muted[]   = L"\x1B[38;2;80;80;120m";
@@ -258,10 +259,10 @@ namespace {
     wchar_t bg__blue[]    = L"\x1B[48;2;10;10;80m";
 
     wchar_t* beat__colors[] = {
-      fg__red
-    , fg__orange
+      fg__green
     , fg__yellow
-    , fg__white
+    , fg__orange
+    , fg__red
     };
 
     wchar_t   info__buffer[2048];
