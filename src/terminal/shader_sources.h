@@ -340,7 +340,7 @@ vec3 aces_approx(vec3 v) {
 
 vec3 effect(vec2 q) {
   g_beat = beat();
-  const vec2 csz = 1.0/vec2(80.,30.);
+  const vec2 csz = 1.0/vec2(80.,60.);
 
   vec2 nq = floor(q/csz)*csz;
   vec2 np = -1.+2.*nq;
