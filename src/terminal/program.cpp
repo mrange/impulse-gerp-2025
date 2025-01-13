@@ -524,40 +524,13 @@ namespace {
     return palette;
   }
 
-  struct ticks__write_pixel_as_sixels {
-    LONGLONG      total__hires    ;
-    DWORD64       total           ;
-    DWORD64       sixel_pixel     ;
-    DWORD64       sixel_buffer    ;
-    DWORD64       used_colors     ;
-    DWORD64       buffer_append   ;
-    DWORD64       buffer_append_n ;
-    DWORD64       write_file      ;
-
-    DWORD64       called__buffer_append   ;
-    DWORD64       called__buffer_append_n ;
-  };
-
   std::u8string const sixel__palette = generate_palette();
-
-  inline void append(
-      std::vector<char8_t>          & buffer
-    , std::u8string const           & v
-    , ticks__write_pixel_as_sixels  & ticks
-    ) {
-    ticks__timer time__append(&ticks.buffer_append);
-    ++ticks.called__buffer_append;
-    buffer.insert(buffer.end(), v.begin(), v.end());
-  }
 
   inline void append_n(
       std::vector<char8_t> &          buffer
     , std::size_t                     n
     , char8_t                         v
-    , ticks__write_pixel_as_sixels  & ticks
     ) {
-    ticks__timer time__append(&ticks.buffer_append_n);
-    ++ticks.called__buffer_append_n;
     buffer.insert(buffer.end(), n ,v);
   }
 
@@ -625,9 +598,7 @@ namespace {
   void write__output(
       HANDLE                        hstdout
     , std::vector<char8_t> &        output
-    , ticks__write_pixel_as_sixels  & ticks
     ) {
-    ticks__timer time__sixel_pixel(&ticks.write_file);
     bkg_writer.enqueue(output);
   }
 #else
@@ -658,10 +629,7 @@ namespace {
     , std::vector<ABGR> const       & pixels
     , std::vector<GLubyte>          & sixel_pixels
     , std::vector<char8_t>          & buffer
-    , ticks__write_pixel_as_sixels  & ticks
     ) {
-    hires__timer hires__total(&ticks.total__hires);
-    ticks__timer time__total(&ticks.total);
 
     if (width > sixel__reps.size()) {
       return;
@@ -708,19 +676,17 @@ namespace {
 
     buffer.clear();
 
-    append(buffer, buffer__prelude, ticks);
+    append(buffer, buffer__prelude);
 
-    append(buffer, sixel__prelude, ticks);
+    append(buffer, sixel__prelude);
 
-    append(buffer, sixel__palette, ticks);
+    append(buffer, sixel__palette);
 
     {
-      ticks__timer time__sixel_pixel(&ticks.sixel_buffer);
       bool used_colors[256];
       for (std::size_t y6 = 0; y6 < height; y6 += 6) {
         auto y6_off = y6*width;
         {
-          ticks__timer time__used_colors(&ticks.used_colors);
           // Find colors used in this group of 6 lines
           memset(used_colors, 0, sizeof(used_colors));
           auto ptr__input = &sixel_pixels.front() + y6_off;
@@ -743,7 +709,7 @@ namespace {
             auto current_col6 = _mm_set1_pi8(static_cast<char>(current_col));
 #endif
 
-            append(buffer, sixel__col_selectors[current_col], ticks);
+            append(buffer, sixel__col_selectors[current_col]);
 
             auto repeated_sixel     = sixel_base;
             std::size_t sixel_reps  = 0;
@@ -775,11 +741,11 @@ namespace {
                 if (sixel_reps > 3) [[unlikely]] {
                   // Use RLE for runs longer than 3
 
-                  append(buffer, sixel__reps[sixel_reps], ticks);
+                  append(buffer, sixel__reps[sixel_reps]);
                   buffer.push_back(repeated_sixel);
                 } else {
                   // Direct output for short runs
-                  append_n(buffer, sixel_reps, repeated_sixel, ticks);
+                  append_n(buffer, sixel_reps, repeated_sixel);
                 }
 
                 repeated_sixel  = sixel_char;
@@ -793,11 +759,11 @@ namespace {
               if (sixel_reps > 3) [[unlikely]] {
                 // Use RLE for runs longer than 3
 
-                append(buffer, sixel__reps[sixel_reps], ticks);
+                append(buffer, sixel__reps[sixel_reps]);
                 buffer.push_back(repeated_sixel);
               } else {
                 // Direct output for short runs
-                append_n(buffer, sixel_reps, repeated_sixel, ticks);
+                append_n(buffer, sixel_reps, repeated_sixel);
               }
             }
 
@@ -813,14 +779,13 @@ namespace {
     _mm_empty();
 #endif
 
-    append(buffer, sixel__epilogue, ticks);
+    append(buffer, sixel__epilogue);
   }
 
   void write__sixel_screen(
       std::vector<char8_t>          & output
     , std::vector<ABGR>             & pixels
     , std::vector<GLubyte>          & sixel_pixels
-    , ticks__write_pixel_as_sixels  & ticks
     ) {
     glReadBuffer(GL_FRONT);
 
@@ -849,7 +814,6 @@ namespace {
         , pixels
         , sixel_pixels
         , output
-        , ticks
         );
     }
   }
@@ -1047,12 +1011,10 @@ int main() {
 
 #ifdef INFO_TEXT
     {
-      ticks__write_pixel_as_sixels ticks = {};
       wchars_to_utf8(output1, info_text);
       write__output(
         hstdout
       , output1
-      , ticks
       );
       std::getchar();
     }
@@ -1082,8 +1044,6 @@ int main() {
         TranslateMessage(&msg);
         DispatchMessage(&msg);
       }
-
-      ticks__write_pixel_as_sixels ticks = {};
 
 #ifdef MUSIC_TIME
       float time = 0;
@@ -1141,7 +1101,6 @@ int main() {
             output
           , pixels
           , sixel_pixels
-          , ticks
           );
         break;
       }
@@ -1155,7 +1114,6 @@ int main() {
       write__output(
         hstdout
       , output
-      , ticks
       );
 
     }
@@ -1170,7 +1128,6 @@ int main() {
 
       output.clear();
 
-      ticks__write_pixel_as_sixels ticks = {};
       wchars_to_utf8(output, end_text);
 
       auto sixel__handle = CreateFileA(
@@ -1207,7 +1164,6 @@ int main() {
       write__output(
         hstdout
       , output
-      , ticks
       );
     }
 
