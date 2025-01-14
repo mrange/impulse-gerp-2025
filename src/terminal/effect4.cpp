@@ -23,7 +23,7 @@ namespace {
 
 
 
-               ▄▀▄▀  SEND OUR GREETINGS TO ▄▀▄▀
+              ▄▀▄▀  SEND OUR GREETINGS TO  ▄▀▄▀
 )BITMAP");
 
   bitmap const greetings = make_bitmap(col__black, LR"BITMAP(
