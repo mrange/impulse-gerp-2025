@@ -677,7 +677,7 @@ vec3 color(vec3 ww, vec3 uu, vec3 vv, vec3 ro, vec2 p) {
 }
 
 vec3 effect(vec2 p, vec2 q) {
-  float fo = (fade_out()-0.25*dot(p,p))/4.;
+  float fo = 2.*fade_out();
   if (fo > 0.) {
     p = round(p/fo)*fo;
   }

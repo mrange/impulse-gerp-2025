@@ -115,7 +115,7 @@ namespace {
   , {196, effect1                                                 , L"With Love from Impulse - Encore!"   }
   , {232, [](effect_input const & ei) { return effect8(ei, 1); }  , L"It doesn't matter if you are B or W"}
   , {260, effect5                                                 , L"This star scroller sucks!"          }
-  , {264, [](effect_input const & ei) { return effect8(ei, 2); }  , L"Trippy tunneling"                   }
+  , {264, [](effect_input const & ei) { return effect8(ei, 2); }  , L"Trippy tubular tunneling"           }
   , {324, effect5                                                 , L"This star scroller still sucks!"    }
   , {328, [](effect_input const & ei) { return effect8(ei, 3); }  , L"The other Lotus challenge"          }
   , {360, [](effect_input const & ei) { return effect8(ei, 4); }  , L"Another approximative cube"         }
@@ -985,7 +985,7 @@ int main() {
 
     IMFPMediaPlayer * player = nullptr;
     CHECK_HRESULT(MFPCreateMediaPlayer(
-      LR"PATH(D:\assets\astroboy--my-head-is-spiritualism.mp3)PATH"
+      LR"PATH(D:\assets\astroboy--my-head-is-spiritualism.wav)PATH"
     , FALSE
     , 0
     , nullptr
