@@ -418,7 +418,7 @@ float fade_in() {
 }
 
 float fade_out() {
-  return 0.;
+  return 0.0;
 }
 
 float fade() {
@@ -630,7 +630,7 @@ vec3 color(vec3 ww, vec3 uu, vec3 vv, vec3 ro, vec2 p) {
   const float per = 40.;
   float lp = length(p);
   vec2 np = p + 1.0/RESOLUTION.xy;
-  float rdd = (mix(2.,4., fade_out())+0.5*lp*tanh(lp+0.9*psin(per*p.x)*psin(per*p.y)));
+  float rdd = 2.0+0.5*lp*tanh(lp+0.9*psin(per*p.x)*psin(per*p.y));
   vec3 rd = normalize(p.x*uu + p.y*vv + rdd*ww);
   vec3 nrd = normalize(np.x*uu + np.y*vv + rdd*ww);
 
@@ -677,6 +677,10 @@ vec3 color(vec3 ww, vec3 uu, vec3 vv, vec3 ro, vec2 p) {
 }
 
 vec3 effect(vec2 p, vec2 q) {
+  float fo = (fade_out()-0.25*dot(p,p))/4.;
+  if (fo > 0.) {
+    p = round(p/fo)*fo;
+  }
   float tm  = planeDist*TIME*0.5*BPM/60.+0.25;
   vec3 ro   = offset(tm);
   vec3 dro  = doffset(tm);
@@ -688,6 +692,7 @@ vec3 effect(vec2 p, vec2 q) {
 
   vec3 col = color(ww, uu, vv, ro, p);
   col += fade_in();
+  col *= smoothstep(1.0, 0.0, fade_out());
   col = sqrt(col);
   return col;
 }
