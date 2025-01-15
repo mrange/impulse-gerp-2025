@@ -144,7 +144,7 @@ effect_kind effect4(effect_input const & ei) {
       //col = aces_approx(col);
       ei.screen.draw__pixel(
           L' '
-        , vec3 {0,0,0}
+        , col
         , col
         , x
         , y
@@ -154,28 +154,53 @@ effect_kind effect4(effect_input const & ei) {
 
   {
     auto bmp_sel = ((music__nbeat(time)-ei.beat__start)/16)%4;
+
     switch(bmp_sel) {
     case 0:
-      ei.screen.draw__bitmap(impulse2   , time, 8, 6);
+      break;
+    case 1:
+      ei.screen.draw__bitmap(
+          greetings_0
+        , time
+        , 18
+        , 13
+        , smoothstep(music__from_nbeat(424), music__from_nbeat(416), time)
+        );
+      break;
+    case 2:
+      ei.screen.draw__bitmap(
+          greetings_1
+        , time
+        , 18
+        , 13
+        , smoothstep(music__from_nbeat(440), music__from_nbeat(432), time)
+        );
+      break;
+    case 3:
+      ei.screen.draw__bitmap(
+          greetings_2
+        , time
+        , 18
+        , 13
+        );
+      break;
+    }
+
+    switch(bmp_sel) {
+    case 0:
+      ei.screen.draw__bitmap(
+          impulse2
+        , time
+        , 8
+        , 6
+        , smoothstep(music__from_nbeat(408), music__from_nbeat(400), time)
+        );
       break;
     default:
       ei.screen.draw__bitmap(greetings, time, 8, 2);
       break;
     }
 
-    switch(bmp_sel) {
-    case 0:
-      break;
-    case 1:
-      ei.screen.draw__bitmap(greetings_0, time, 18, 13);
-      break;
-    case 2:
-      ei.screen.draw__bitmap(greetings_1, time, 18, 13);
-      break;
-    case 3:
-      ei.screen.draw__bitmap(greetings_2, time, 18, 13);
-      break;
-    }
   }
 
   {

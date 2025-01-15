@@ -847,7 +847,7 @@ namespace {
       return flag == sixel_flag;
     };
 
-    // Read response, it's flags that are semi-colon 
+    // Read response, it's flags that are semi-colon
     //  separated so run check_flag after each flag is read
     for (auto ch : input) {
       if (ch == ';') {
@@ -908,7 +908,7 @@ int main() {
       auto s__current = s__exe.substr(0, f__slash);
       CHECK_CONDITION(SetCurrentDirectoryA(s__current.c_str()));
     }
- 
+
     CHECK_HRESULT(CoInitialize(0));
     auto onexit__counitialize = on_exit([]{ CoUninitialize(); });
 
