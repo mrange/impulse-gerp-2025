@@ -985,7 +985,7 @@ int main() {
 
     IMFPMediaPlayer * player = nullptr;
     CHECK_HRESULT(MFPCreateMediaPlayer(
-      LR"PATH(D:\assets\astroboy--my-head-is-spiritualism.wav)PATH"
+      LR"PATH(astroboy--my-head-is-spiritualism.mp3)PATH"
     , FALSE
     , 0
     , nullptr

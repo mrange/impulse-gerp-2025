@@ -124,6 +124,11 @@
       <DeploymentContent>true</DeploymentContent>
     </Text>
   </ItemGroup>
+  <ItemGroup>
+    <Media Include="astroboy--my-head-is-spiritualism.mp3">
+      <DeploymentContent>true</DeploymentContent>
+    </Media>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
