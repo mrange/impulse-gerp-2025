@@ -784,6 +784,11 @@ float hash(float co) {
   return fract(sin(co*12.9898) * 13758.5453);
 }
 
+float hash(vec3 r)  {
+  return fract(sin(dot(r.xy,vec2(1.38984*sin(r.z),1.13233*cos(r.z))))*653758.5453);
+}
+
+
 float pmin(float a, float b, float k) {
   float h = clamp( 0.5+0.5*(b-a)/k, 0.0, 1.0 );
   return mix( b, a, h ) - k*h*(1.0-h);
@@ -1003,7 +1008,7 @@ vec2 plane0_df1(vec2 p2, float n, float nr, out vec2 np2) {
 
   vec2 cd0 = plane0_cell0(hp);
   vec2 cd1 = plane0_cell1(hp);
-  vec2 d0 = mix(cd0, cd1, fract(r*13.) > 0.5);
+  vec2 d0 = fract(r*13.) > 0.5 ? cd0:cd1;
 
   hd = min(hd, d0.y);
 
